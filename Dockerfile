@@ -1,45 +1,53 @@
-FROM phusion/baseimage:0.9.15
+# NAME: nginx-php
+# VERSION: 0.0.1
+#
+# Basic Nginx PHP-FPM Build
+#
+FROM ubuntu:latest
 
-# Ensure UTF-8
-RUN locale-gen en_US.UTF-8
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
+#Environment
+ENV PHP php-7.0.0
 
-ENV HOME /root
-
-RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
-
-CMD ["/sbin/my_init"]
-
-# Nginx-PHP Installation
 RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y vim curl wget build-essential python-software-properties
-RUN add-apt-repository -y ppa:ondrej/php5
-RUN add-apt-repository -y ppa:nginx/stable
-RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --force-yes php5-cli php5-fpm php5-mysql php5-pgsql php5-sqlite php5-curl\
-		       php5-gd php5-mcrypt php5-intl php5-imap php5-tidy
+RUN apt-get install -y vim git curl wget build-essential python-software-properties
+RUN apt-get install -y insserv
+RUN mkdir -p /opt/$PHP
+RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2
+RUN tar -xvf $PHP.tar.bz2
 
-RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/cli/php.ini
+RUN apt-get -y install build-essential nano
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y nginx
+RUN apt-get -y install libfcgi-dev libmcrypt-dev libssl-dev
+RUN apt-get -y install libfcgi0ldbl
+RUN apt-get -y install libjpeg-dev libpng12-dev
+RUN apt-get -y install libc-client2007e libc-client2007e-dev 
+RUN apt-get -y install libxml2-dev libxslt1-dev
+RUN apt-get -y install libbz2-dev libcurl4-openssl-dev libfreetype6-dev libkrb5-dev libpq-dev
 
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
- 
-RUN mkdir -p        /var/www
-ADD build/default   /etc/nginx/sites-available/default
-RUN mkdir           /etc/service/nginx
-ADD build/nginx.sh  /etc/service/nginx/run
-RUN chmod +x        /etc/service/nginx/run
-RUN mkdir           /etc/service/phpfpm
-ADD build/phpfpm.sh /etc/service/phpfpm/run
-RUN chmod +x        /etc/service/phpfpm/run
+RUN ln -s /usr/lib/libc-client.a /usr/lib/x86_64-linux-gnu/libc-client.a
+
+RUN /$PHP/configure --prefix=/opt/$PHP --with-pdo-pgsql --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr --enable-soap --enable-calendar --with-curl --with-mcrypt --with-zlib --with-gd --with-pgsql --disable-rpath --enable-inline-optimization --with-bz2 --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr --enable-gd-native-ttf --with-openssl --with-fpm-user=www-data --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu --enable-ftp --with-imap --with-imap-ssl --with-kerberos --with-gettext --with-xmlrpc --with-xsl --enable-opcache --enable-fpm
+
+RUN make
+RUN make install
+
+
+RUN rm -Rf /$PHP.tar.bz2
+
+RUN apt-get -y install nginx
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/default /etc/nginx/sites-enabled/default
+COPY php/www.conf /opt/php-7.0.0/etc/php-fpm.d/www.conf
+COPY php/php-fpm.conf /opt/$PHP/etc/php-fpm.conf
+#RUN insserv php-7.0.0-fpm
+
+#Set up services
+RUN apt-get -y install insserv
+COPY php/php-fpm /etc/init.d/php-fpm
+RUN chmod 755 /etc/init.d/php-fpm
+RUN chown root:root /etc/init.d/php-fpm
+RUN /usr/lib/insserv/insserv /etc/init.d/php-fpm
+RUN /usr/lib/insserv/insserv /etc/init.d/nginx
 
 EXPOSE 80
-# End Nginx-PHP
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
