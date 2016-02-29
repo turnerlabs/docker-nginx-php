@@ -3,7 +3,7 @@
 #
 # Basic Nginx PHP-FPM Build
 #
-FROM ubuntu:latest
+FROM ubuntu:14.04
 
 #Environment
 ENV PHP php-7.0.0
@@ -24,13 +24,13 @@ RUN mkdir -p /opt/$PHP
 RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2
 RUN tar -xvf $PHP.tar.bz2
 
-RUN ln -s /usr/lib/libc-client.a /usr/lib/x86_64-linux-gnu/libc-client.a
-
 RUN /$PHP/configure --prefix=$PHP_PATH --with-pdo-pgsql --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr --enable-soap --enable-calendar --with-curl --with-mcrypt --with-zlib --with-gd --with-pgsql --disable-rpath --enable-inline-optimization --with-bz2 --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr --enable-gd-native-ttf --with-openssl --with-fpm-user=www-data --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu --enable-ftp --with-imap --with-imap-ssl --with-kerberos --with-gettext --with-xmlrpc --with-xsl --enable-opcache --enable-fpm
 
 RUN make && make install
 
 RUN rm -Rf /$PHP.tar.bz2
+RUN cd /$PHP && make
+RUN cd /$PHP && make install
 
 RUN apt-get -y install nginx
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
@@ -45,3 +45,7 @@ COPY php/php-fpm /etc/init.d/php-fpm
 RUN chmod 755 /etc/init.d/php-fpm
 RUN chown root:root /etc/init.d/php-fpm
 RUN /usr/lib/insserv/insserv /etc/init.d/php-fpm && /usr/lib/insserv/insserv /etc/init.d/nginx
+
+#Clean up
+RUN rm -Rf /$PHP.tar.bz2
+RUN rm -Rf /$PHP
