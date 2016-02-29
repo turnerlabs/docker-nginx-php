@@ -1,0 +1,83 @@
+# NAME: nginx-php
+# VERSION: 0.0.1
+#
+# Basic Nginx PHP-FPM Build
+#
+FROM alpine
+
+#Environment
+ENV PHP php-7.0.0
+ENV PHP_PATH /opt/$PHP
+
+RUN apk --update add nginx \
+    supervisor \
+    curl \
+    grep \
+    gmp-dev \
+    libmcrypt-dev \
+    libc-dev \
+    gettext-dev \
+    freetype-dev \
+    libxpm-dev \
+    libwebp-dev \
+    libjpeg-turbo-dev \
+    libjpeg \
+    bzip2-dev \
+    openssl-dev \
+    krb5-dev \
+    libxml2-dev \
+    build-base \
+    tar \
+    make \
+    autoconf \
+    re2c \
+    bison \
+    curl-dev && \
+    rm /var/cache/apk/*
+
+RUN mkdir -p /opt/$PHP
+RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2 && \
+    tar jxvf $PHP.tar.bz2 && \
+    /$PHP/configure --enable-static --prefix=$PHP_PATH --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr --enable-soap --enable-calendar --with-curl --with-mcrypt --with-zlib --with-gd --disable-rpath --enable-inline-optimization --with-bz2 --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr --enable-gd-native-ttf --with-openssl --with-fpm-user=www-data --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu --enable-ftp --with-kerberos --with-gettext --with-xmlrpc --enable-opcache --enable-fpm && \
+    make && make install && make clean &&\
+    rm -Rf /$PHP.tar.bz2 && \
+    rm -Rf /$PHP 
+
+RUN apk del \
+    curl \
+    grep \
+    make \
+    autoconf \
+    re2c \
+    bison
+
+COPY php/www.conf $PHP_PATH/etc/php-fpm.d/www.conf
+COPY php/php-fpm.conf $PHP_PATH/etc/php-fpm.conf
+
+CMD cd / && tar -cjf - lib/libz.so.1* \
+    usr/lib/libmcrypt.so.4* \
+    usr/lib/libintl.so.8* \
+    usr/lib/libpng16.so.16* \
+    usr/lib/libjpeg.so.8* \
+    usr/lib/libcurl.so.4* \
+    usr/lib/libbz2.so.1* \
+    usr/lib/libxml2.so.2* \
+    #usr/lib/libgssapi_krb5.so.2* \
+    usr/lib/libkrb5.so.3* \
+    usr/lib/libk5crypto.so.3* \
+    lib/libssl.so.1.* \
+    lib/libcrypto.so.1* \
+    usr/lib/libfreetype.so.6* \
+    lib/ld-musl-x86_64.so.1* \
+    usr/lib/libssh2.so.1* \
+    usr/lib/libkrb5support.so.0* \
+    lib/libkeyutils.so.1* \
+    lib/libcom_err.so.2* \
+    usr/lib/libgssapi_krb5.so.2* \
+    usr/lib/libpcre.so.1* \
+    etc \
+    opt \ 
+    usr/sbin/nginx \
+    var/log/nginx \
+    var/lib/nginx
+
