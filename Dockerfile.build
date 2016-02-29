@@ -3,7 +3,7 @@
 #
 # Basic Nginx PHP-FPM Build
 #
-FROM alpine
+FROM registry.services.dmtio.net/tinylayers/base:latest
 
 #Environment
 ENV PHP php-7.0.0
