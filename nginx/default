@@ -1,117 +1,129 @@
-# You may add here your
-# server {
-#	...
-# }
-# statements for each of your virtual hosts to this file
-
-##
-# You should look at the following URL's in order to grasp a solid understanding
-# of Nginx configuration files in order to fully unleash the power of Nginx.
-# http://wiki.nginx.org/Pitfalls
-# http://wiki.nginx.org/Quickstart
-# http://wiki.nginx.org/Configuration
-#
-# Generally, you will want to move this file somewhere, and start with a clean
-# file but keep this around for reference. Or just disable in sites-enabled.
-#
-# Please see /usr/share/doc/nginx/examples/ for more detailed examples.
-##
-
+upstream www_php {
+    server unix:/var/run/php7-fpm.soc max_fails=0;
+}
 server {
+	server_name _;
 	listen   80; ## listen for ipv4; this line is default and implied
-	#listen   [::]:80 default ipv6only=on; ## listen for ipv6
+	root /var/www;
 
-	root /usr/share/nginx/html;
+	access_log /dev/stdout;
+        error_log /dev/stdout;
 	index index.html index.htm;
 
-	# Make site accessible from http://localhost/
-	server_name localhost;
+        # If using an NFS root, set sendfile and tcp_nopush to off, otherwise set to on.
+        sendfile on;
+        tcp_nopush on;
 
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to index.html
-		try_files $uri $uri/ /index.html;
-	}
+        # Add header to see cache status in header (MISS, EXPIRED, UPDATING, STALE or HIT)
+        add_header X-Cache-Status $upstream_cache_status;
 
-	location /doc {
-		root /usr/share;
-		autoindex on;
-		allow 127.0.0.1;
-		deny all;
-	}
+        keepalive_timeout 65;
 
-	location /images {
-		root /usr/share;
-		autoindex off;
-	}
+        client_max_body_size 50m;
 
-	#error_page 404 /404.html;
+        gzip  on;
+        gzip_comp_level 2;
+        gzip_proxied any;
+        gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 
-	# redirect server error pages to the static page /50x.html
-	#
-	#error_page 500 502 503 504 /50x.html;
-	#location = /50x.html {
-	#	root /usr/share/nginx/www;
-	#}
+        ssi on;
+        ssi_silent_errors off;
+        ssi_types text/plain;
 
-	# proxy the PHP scripts to Apache listening on 127.0.0.1:80
-	#
-	#location ~ \.php$ {
-	#	proxy_pass http://127.0.0.1;
-	#}
+        if ($http_cookie ~ "(^|[;,])\s*SESS") {
+            set $no_cache 1;
+        }
 
-	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-	#
-	location ~ \.php$ {
-		fastcgi_pass 127.0.0.1:9000;
-		fastcgi_index index.php;
-		include fastcgi_params;
-	}
+        # Disable all caching for admin template
+        set $no_cache 1;
 
-	# deny access to .htaccess files, if Apache's document root
-	# concurs with nginx's one
-	#
-	#location ~ /\.ht {
-	#	deny all;
-	#}
+        client_body_temp_path /dev/shm/client_body_temp;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+        include fastcgi_params;
+        fastcgi_index index.php;
+        fastcgi_intercept_errors on;
+        fastcgi_next_upstream error timeout invalid_header http_500 http_503;
+        fastcgi_cache_use_stale updating error timeout invalid_header http_500 http_503;
+        fastcgi_cache_key $host$request_method$request_uri;
+        fastcgi_cache_valid 200 1m;
+        fastcgi_cache_valid 404 10s;
+        fastcgi_cache_valid 301 302 1h;
+        fastcgi_connect_timeout 240s;
+        fastcgi_read_timeout 240s;
+        fastcgi_send_timeout 240s;
+        fastcgi_buffer_size 32k;
+        fastcgi_buffers 16 32k;
+        fastcgi_busy_buffers_size 64k;
+        fastcgi_temp_file_write_size 64k;
+        # this is nginx status
+        location = /server-status {
+            allow 10.0.0.0/8;
+            allow 127.0.0.1;
+            deny   all;
+            stub_status on;
+        }
+
+        location = /fpm-status {
+            fastcgi_pass www_php;
+            fastcgi_cache off;
+            allow 10.0.0.0/8;
+            allow 127.0.0.1;
+            deny   all;
+        }
+
+        location = /fpm-ping {
+            fastcgi_pass www_php;
+            fastcgi_cache off;
+            allow 10.0.0.0/8;
+            allow 127.0.0.1;
+            deny   all;
+        }
+
+        location = /favicon.ico {
+            expires max;
+            log_not_found off;
+            access_log off;
+            try_files $uri @rewrite;
+        }
+
+        location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+            try_files $uri @rewrite;
+        }
+
+        # Very rarely should these ever be accessed outside of your lan
+        location ~* \.(txt|log)$ {
+            allow 10.0.0.0/8;
+            deny all;
+        }
+
+        location ~ \..*/.*\.php$ {
+            return 403;
+        }
+
+        location ~* \.(engine|inc|info|install|make|module|profile|test|po|sh|.sql|theme|tpl(\.php)?|txt|xtmpl|svn-base)$|(code-style\.pl|Entries.|Repository|Root|Tag|Template|all-wcprops|entries|format|/manifest)$
+        { deny all; }
+
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+
+        location @rewrite {
+            rewrite ^/(.*)$ /index.php?q=$1;
+        }
+
+        # Don't allow direct access to PHP files in the vendor directory.
+        location ~ /vendor/.*\.php$ {
+            deny all;
+            return 404;
+        }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
+    }
 }
-
-
-# another virtual host using mix of IP-, name-, and port-based configuration
-#
-#server {
-#	listen 8000;
-#	listen somename:8080;
-#	server_name somename alias another.alias;
-#	root html;
-#	index index.html index.htm;
-#
-#	location / {
-#		try_files $uri $uri/ /index.html;
-#	}
-#}
-
-
-# HTTPS server
-#
-#server {
-#	listen 443;
-#	server_name localhost;
-#
-#	root html;
-#	index index.html index.htm;
-#
-#	ssl on;
-#	ssl_certificate cert.pem;
-#	ssl_certificate_key cert.key;
-#
-#	ssl_session_timeout 5m;
-#
-#	ssl_protocols SSLv3 TLSv1;
-#	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-#	ssl_prefer_server_ciphers on;
-#
-#	location / {
-#		try_files $uri $uri/ /index.html;
-#	}
-#}

@@ -7,7 +7,7 @@ COPY php/php.ini /$PHP_PATH/usr/etc/php.ini
 COPY php/www.conf $PHP_PATH/etc/php-fpm.d/www.conf
 COPY php/php-fpm.conf $PHP_PATH/etc/php-fpm.conf
 
-ENV PATH=$PATH:$PHP_PATH
+ENV PATH $PATH:/opt/php/bin:/opt/php/sbin
 
 #Set up services
 COPY php/php-fpm /etc/init.d/php-fpm
