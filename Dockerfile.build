@@ -85,5 +85,11 @@ CMD cd / && tar -cjf - lib/libz.so.1* \
     usr/sbin/nginx \
     var/www \
     var/log/nginx \
-    var/lib/nginx
-
+    var/lib/nginx \
+    usr/lib/python2.7/site-packages/supervisor \
+    usr/bin/supervisord \
+    usr/bin/pidproxy \
+    etc/init.d/supervisord \
+    etc/logrotate.d/supervisord \
+    etc/supervisord.conf \
+    usr/bin/echo_supervisord_conf
