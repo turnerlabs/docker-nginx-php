@@ -1,6 +1,8 @@
 FROM alpine
 ADD build.tar.gz /
-RUN adduser -S www-data
+RUN apk update && apk del python
+RUN apk add python
+RUN addgroup www-data && adduser -S www-data -G www-data
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/default /etc/nginx/sites-enabled/default
 COPY php/php.ini /$PHP_PATH/usr/etc/php.ini
