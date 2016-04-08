@@ -1,5 +1,5 @@
-php_fpm_BIN=/opt/php-7.0.0/sbin/php-fpm
-php_fpm_CONF=/opt/php-7.0.0/etc/php-fpm.conf
+php_fpm_BIN=/usr/lib/php7/sbin/php-fpm
+php_fpm_CONF=/etc/php7/php-fpm.conf
 php_fpm_PID=/var/run/php-fpm.pid
 php_opts="--fpm-config $php_fpm_CONF"
 wait_for_pid () {

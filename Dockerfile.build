@@ -6,8 +6,9 @@
 FROM registry.services.dmtio.net/tinylayers/base:latest
 
 #Environment
-ENV PHP php-7.0.4
-ENV PHP_PATH /opt/php
+ENV PHP=php-7.0.5
+ENV PHP_PATH=/usr/lib/php7
+ENV PHP_CONFIG_PATH=/etc/php7
 
 ENV NGINX nginx-1.0.5
 
@@ -35,16 +36,54 @@ RUN apk --update add nginx \
     autoconf \
     re2c \
     bison \
-    curl-dev && \
-    rm /var/cache/apk/*
+    sed \
+    curl-dev \
+    && rm /var/cache/apk/*
 
 RUN mkdir -p $PHP_PATH
 RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2 && \
     tar jxvf $PHP.tar.bz2 && \
-    /$PHP/configure --enable-static --prefix=$PHP_PATH --enable-cgi --enable-fpm --with-openssl --with-mcrypt --with-zlib --enable-mbstring --enable-pdo --with-curl --disable-debug --with-pic --disable-rpath --enable-inline-optimization --with-bz2 --enable-xml --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --with-mhash --enable-zip --with-pcre-regex --with-gd --without-pdo-sqlite --with-pdo-mysql --without-sqlite --with-jpeg-dir=/usr/lib --with-png-dir=/usr/lib --with-freetype-dir=/usr/lib --with-mysqli && \
-    make && make install && make clean &&\
-    rm -Rf /$PHP.tar.bz2 && \
-    rm -Rf /$PHP 
+    /$PHP/configure \
+    --with-config-file-path=/etc/php7 \
+    --enable-opcache \
+    --enable-static \
+    --prefix=$PHP_PATH \
+    --enable-ctype \
+    --enable-cgi \
+    --enable-fpm \
+    --with-openssl \
+    --with-mcrypt \
+    --with-zlib \
+    --enable-mbstring \
+    --enable-pdo \
+    --with-curl \
+    --disable-debug \
+    --with-pic \
+    --disable-rpath \
+    --enable-inline-optimization \
+    --with-bz2 \
+    --enable-xml \
+    --with-zlib \
+    --enable-sockets \
+    --enable-sysvsem \
+    --enable-sysvshm \
+    --enable-pcntl \
+    --enable-mbregex \
+    --with-mhash \
+    --enable-zip \
+    --with-pcre-regex \
+    --with-gd \
+    --without-pdo-sqlite \
+    --with-pdo-mysql \
+    --with-jpeg-dir=/usr/lib \
+    --with-png-dir=/usr/lib \
+    --with-freetype-dir=/usr/lib \
+    --with-mysqli \
+    && make \
+    && make install \
+    && make clean \
+    && rm -Rf /$PHP.tar.bz2 \
+    && rm -Rf /$PHP 
 
 RUN apk --update add nginx
 RUN apk del \
@@ -53,6 +92,7 @@ RUN apk del \
     make \
     autoconf \
     re2c \
+    sed \
     bison
 
 COPY php/www.conf $PHP_PATH/etc/php-fpm.d/www.conf
@@ -60,7 +100,8 @@ COPY php/php-fpm.conf $PHP_PATH/etc/php-fpm.conf
 COPY php/php.ini $PHP_PATH/lib/php.ini
 COPY www /var/www
 
-CMD cd / && tar -cjf - lib/libz.so.1* \
+CMD cd / && tar -vcjf - lib/libz.so.1* \
+    usr/lib/php7 \
     usr/lib/libmcrypt.so.4* \
     usr/lib/libintl.so.8* \
     usr/lib/libpng16.so.16* \
@@ -81,7 +122,6 @@ CMD cd / && tar -cjf - lib/libz.so.1* \
     usr/lib/libgssapi_krb5.so.2* \
     usr/lib/libpcre.so.1* \
     etc/nginx \
-    opt \ 
     usr/sbin/nginx \
     var/www \
     var/log/nginx \
