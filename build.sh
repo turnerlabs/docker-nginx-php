@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_NAME=docker-nginx-php
-PROJECT_VERSION=0.0.6
+PROJECT_VERSION=0.0.7
 docker build -t project.build -f Dockerfile.build .
 echo "build done"
 docker run project.build > build.tar.gz
