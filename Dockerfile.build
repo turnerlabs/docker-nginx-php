@@ -40,11 +40,12 @@ RUN apk --update add nginx \
     curl-dev \
     && rm /var/cache/apk/*
 
-RUN mkdir -p $PHP_PATH
+RUN mkdir -p $PHP_PATH/php7.d 
 RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2 && \
     tar jxvf $PHP.tar.bz2 && \
     /$PHP/configure \
-    --with-config-file-path=/etc/php7 \
+    --with-config-file-path=$PHP_CONFIG_PATH \
+    --with-config-file-scan-dir=$PHP_CONFIG_PATH/php7.d \
     --enable-opcache \
     --enable-static \
     --prefix=$PHP_PATH \
@@ -95,11 +96,6 @@ RUN apk del \
     sed \
     bison
 
-COPY php/www.conf $PHP_PATH/etc/php-fpm.d/www.conf
-COPY php/php-fpm.conf $PHP_PATH/etc/php-fpm.conf
-COPY php/php.ini $PHP_PATH/lib/php.ini
-COPY www /var/www
-
 CMD cd / && tar -vcjf - lib/libz.so.1* \
     usr/lib/php7 \
     usr/lib/libmcrypt.so.4* \
@@ -122,8 +118,8 @@ CMD cd / && tar -vcjf - lib/libz.so.1* \
     usr/lib/libgssapi_krb5.so.2* \
     usr/lib/libpcre.so.1* \
     etc/nginx \
+    etc/php7 \
     usr/sbin/nginx \
-    var/www \
     var/log/nginx \
     var/lib/nginx \
     usr/lib/python2.7/site-packages \
