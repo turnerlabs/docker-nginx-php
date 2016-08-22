@@ -84,9 +84,17 @@ RUN wget http://de1.php.net/get/$PHP.tar.bz2/from/this/mirror -O $PHP.tar.bz2 &&
     && make install \
     && make clean \
     && rm -Rf /$PHP.tar.bz2 \
-    && rm -Rf /$PHP 
+    && rm -Rf /$PHP
+ENV PATH=$PATH:$PHP_PATH/bin:$PHP_PATH/sbin
 
 RUN apk --update add nginx
+
+# Install Composer
+RUN apk add curl ca-certificates \
+    && mkdir -p /etc/ssl/certs/ \
+    && update-ca-certificates --fresh \
+    && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
+
 RUN apk del \
     curl \
     grep \
@@ -119,10 +127,12 @@ CMD cd / && tar -vcjf - lib/libz.so.1* \
     usr/lib/libpcre.so.1* \
     etc/nginx \
     etc/php7 \
+    etc/ssl/certs \
     usr/sbin/nginx \
     var/log/nginx \
     var/lib/nginx \
     usr/lib/python2.7/site-packages \
+    usr/bin/composer \
     usr/bin/supervisord \
     usr/bin/pidproxy \
     etc/init.d/supervisord \
