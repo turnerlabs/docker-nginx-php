@@ -3,6 +3,11 @@
 PROJECT_NAME=docker-nginx-php
 PROJECT_VERSION=0.0.9
 docker build -t project.build -f Dockerfile.build .
+status=$?
+if [[ $status -ne 0 ]]; then
+	echo "build failed" 
+	exit 1
+fi
 echo "build done"
 docker run project.build > build.tar.gz
 echo "retreived package $(ls build.tar.gz)"
