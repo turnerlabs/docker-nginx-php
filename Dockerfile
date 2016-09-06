@@ -56,6 +56,7 @@ RUN apk --update add \
     supervisor \
     tar \
     && rm /var/cache/apk/* \
+    && rm /etc/php7/conf.d/xdebug.ini \
     && ln -s /usr/bin/php7 /usr/bin/php
 
 
