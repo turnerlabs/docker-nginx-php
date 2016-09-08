@@ -45,6 +45,7 @@ RUN apk --update add \
     php7-mbstring@community \
     php7-mysqli@community \
     php7-openssl@community \
+    php7-pdo_mysql@community \
     php7-phar@community \
     php7-session@community \
     php7-redis@testing \
