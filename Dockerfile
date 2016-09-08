@@ -88,7 +88,7 @@ RUN adduser -S www-data -G www-data \
 # Copy config files
 COPY nginx/default /etc/nginx/sites-enabled/default
 COPY php/php.ini $PHP_CONFIG_PATH/php.ini
-COPY php/www.conf $PHP_CONFIG_PATH/fpm.d/www.conf
+COPY php/www.conf $PHP_CONFIG_PATH/php-fpm.d/www.conf
 COPY php/php-fpm.conf $PHP_CONFIG_PATH/php-fpm.conf
 #Set up services
 COPY php/php-fpm /etc/init.d/php-fpm
