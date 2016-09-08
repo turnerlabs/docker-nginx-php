@@ -4,10 +4,8 @@ FROM alpine:3.4
 COPY repositories /etc/apk/repositories
 
 #Environment
-ENV PHP=php-7.0.10
 ENV PHP_PATH=/usr/bin/php7
 ENV PHP_CONFIG_PATH=/etc/php7
-ENV NGINX nginx-1.11.3
 RUN apk --update add \
     autoconf \
     #bzip2-dev \
