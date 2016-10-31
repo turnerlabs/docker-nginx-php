@@ -2,34 +2,23 @@
 # Basic Nginx PHP-FPM Build
 FROM alpine:3.4
 COPY repositories /etc/apk/repositories
-
 #Environment
 ENV PHP_PATH=/usr/bin/php7
 ENV PHP_CONFIG_PATH=/etc/php7
 RUN apk --update add \
     autoconf \
-    #bzip2-dev \
     ca-certificates \
     curl \
     #freetype-dev \
     #gettext-dev \
     g++ \
     git \
-    #gmp-dev \
-    #krb5-dev \
-    #libjpeg-turbo-dev \
-    #libjpeg \
-    #libmcrypt-dev \
-    #libxpm-dev \
-    #libxml2-dev \
-    #libwebp-dev \
+    libressl@edge \
     make \
     musl@edge \
     musl-dev@edge \
     musl-utils@edge \
     nginx \
-    #openssl-dev \
-    #perl \
     php7@community \
     php7-dom@community \
     php7-fpm@community \
@@ -44,6 +33,7 @@ RUN apk --update add \
     php7-json@community \
     php7-mbstring@community \
     php7-mysqli@community \
+    php7-opcache@community \
     php7-openssl@community \
     php7-pdo_mysql@community \
     php7-phar@community \
