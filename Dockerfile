@@ -9,8 +9,6 @@ RUN apk --update add \
     autoconf \
     ca-certificates \
     curl \
-    #freetype-dev \
-    #gettext-dev \
     g++ \
     git \
     libressl@edge \
@@ -40,9 +38,7 @@ RUN apk --update add \
     php7-session@community \
     php7-redis@testing \
     php7-xdebug@testing \
-    #composer@testing \
     shadow@community \
-    supervisor \
     tar \
     && rm /var/cache/apk/* \
     && rm /etc/php7/conf.d/xdebug.ini \
