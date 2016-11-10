@@ -18,6 +18,7 @@ RUN apk --update add \
     musl-utils@edge \
     nginx \
     php7@community \
+    php7-apcu@testing \
     php7-dom@community \
     php7-fpm@community \
     php7-openssl@community \
