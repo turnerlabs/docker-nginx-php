@@ -41,8 +41,8 @@ RUN apk --update add \
     php7-xdebug@testing \
     shadow@community \
     tar \
-    && rm /var/cache/apk/* \
-    && rm /etc/php7/conf.d/xdebug.ini \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
     && ln -s /usr/bin/php7 /usr/bin/php
 
 
@@ -52,7 +52,6 @@ RUN mkdir -p /etc/ssl/certs/ \
     && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
 
 #install newrelic php agent and daemon
-#ADD https://download.newrelic.com/php_agent/archive/6.5.0.166/newrelic-php5-6.5.0.166-linux-musl.tar.gz /
 ENV NR_INSTALL_SILENT=FALSE
 ENV NR_INSTALL_KEY=${}
 ENV NR_INSTALL_USE_CP_NOT_LN=/usr/bin/newrelic-php/
