@@ -1,24 +1,26 @@
 # NAME: nginx-php
 # Basic Nginx PHP-FPM Build
-FROM alpine:3.4
+FROM alpine:3.5
 COPY repositories /etc/apk/repositories
 #Environment
 ENV PHP_PATH=/usr/bin/php7
 ENV PHP_CONFIG_PATH=/etc/php7
+RUN apk update
 RUN apk --update add \
     autoconf \
     ca-certificates \
     curl \
     g++ \
     git \
-    libressl@edge \
+    libressl \
     make \
-    musl@edge \
-    musl-dev@edge \
-    musl-utils@edge \
+    musl \
+    musl-dev \
+    musl-utils \
     nginx \
+    libwebp \
     php7@community \
-    php7-apcu@testing \
+    php7-apcu@community \
     php7-dom@community \
     php7-fpm@community \
     php7-openssl@community \
@@ -27,7 +29,7 @@ RUN apk --update add \
     php7-ctype@community \
     php7-curl@community \
     php7-bz2@community \
-    php7-gd@community \
+    php7-gd@v3.5-community \
     php7-iconv@community \
     php7-json@community \
     php7-mbstring@community \
@@ -38,7 +40,7 @@ RUN apk --update add \
     php7-phar@community \
     php7-session@community \
     php7-redis@testing \
-    php7-xdebug@testing \
+    php7-xdebug@community \
     shadow@community \
     tar \
     && rm -rf /var/cache/apk/* \
