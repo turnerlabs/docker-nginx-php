@@ -36,6 +36,7 @@ RUN apk --update add \
     php7-mysqli@community \
     php7-opcache@community \
     php7-openssl@community \
+    php7-pdo@community \
     php7-pdo_mysql@community \
     php7-phar@community \
     php7-session@community \
