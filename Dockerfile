@@ -3,10 +3,10 @@
 FROM alpine:3.5
 COPY repositories /etc/apk/repositories
 #Environment
-ENV PHP_PATH=/usr/bin/php7
-ENV PHP_CONFIG_PATH=/etc/php7
-RUN apk update
-RUN apk --update add \
+ENV PHP_PATH=/usr/bin/php5
+ENV PHP_CONFIG_PATH=/etc/php5
+#RUN apk update
+RUN apk --no-cache add \
     autoconf \
     ca-certificates \
     curl \
@@ -19,34 +19,34 @@ RUN apk --update add \
     musl-utils \
     nginx \
     libwebp \
-    php7@community \
-    php7-apcu@community \
-    php7-dom@community \
-    php7-fpm@community \
-    php7-openssl@community \
-    php7-mcrypt@community \
-    php7-zlib@community \
-    php7-ctype@community \
-    php7-curl@community \
-    php7-bz2@community \
-    php7-gd@v3.5-community \
-    php7-iconv@community \
-    php7-json@community \
-    php7-mbstring@community \
-    php7-mysqli@community \
-    php7-opcache@community \
-    php7-openssl@community \
-    php7-pdo@community \
-    php7-pdo_mysql@community \
-    php7-phar@community \
-    php7-session@community \
-    php7-redis@testing \
-    php7-xdebug@community \
+    php5 \
+    php5-apcu \
+    php5-dom@community \
+    php5-fpm \
+    php5-openssl \
+    php5-mcrypt \
+    php5-memcache \
+    php5-zlib \
+    php5-ctype \
+    php5-curl \
+    php5-bz2 \
+    php5-gd \
+    php5-iconv \
+    php5-json \
+    #php5-mbstring@community \
+    php5-mysqli \
+    php5-opcache \
+    php5-openssl \
+    php5-pdo \
+    php5-pdo_mysql \
+    php5-phar \
+    #php5-session@community \
+    php5-xdebug@v3.5-community \
     shadow@community \
     tar \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/* \
-    && ln -s /usr/bin/php7 /usr/bin/php
+    #&& ln -s /usr/bin/php5 /usr/bin/php
 
 
 # Install Composer
