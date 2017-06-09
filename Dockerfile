@@ -40,12 +40,13 @@ RUN apk --no-cache add \
     php5-pdo \
     php5-pdo_mysql \
     php5-phar \
+    php5-xml \
     #php5-session@community \
     php5-xdebug@v3.5-community \
     shadow@community \
     tar \
     && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/* \
+    && rm -rf /tmp/*
     #&& ln -s /usr/bin/php5 /usr/bin/php
 
 
@@ -71,7 +72,7 @@ RUN wget "http://download.newrelic.com/php_agent/archive/6.5.0.166/newrelic-php5
 # Ensure $HOME is set
 ENV HOME /root
 # Copy config files
-COPY etc /etc
+#COPY etc /etc
 # Create www-data user
 RUN adduser -S www-data -G www-data \
   && usermod -u 1000 www-data
