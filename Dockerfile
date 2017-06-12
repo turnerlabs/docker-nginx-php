@@ -33,7 +33,6 @@ RUN apk --no-cache add \
     php5-gd \
     php5-iconv \
     php5-json \
-    #php5-mbstring@community \
     php5-mysqli \
     php5-opcache \
     php5-openssl \
@@ -41,20 +40,15 @@ RUN apk --no-cache add \
     php5-pdo_mysql \
     php5-phar \
     php5-xml \
-    #php5-session@community \
     php5-xdebug@v3.5-community \
     shadow@community \
     tar \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
-    #&& ln -s /usr/bin/php5 /usr/bin/php
-
-
 # Install Composer
 RUN mkdir -p /etc/ssl/certs/ \
     && update-ca-certificates --fresh \
     && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
-
 #install newrelic php agent and daemon
 ENV NR_INSTALL_SILENT=FALSE
 ENV NR_INSTALL_KEY=${}
@@ -68,11 +62,8 @@ RUN wget "http://download.newrelic.com/php_agent/archive/6.5.0.166/newrelic-php5
   && rm -rf /newrelic-php5-6.5.0.166-linux-musl.tar.gz \
   && mkdir -p /var/log/newrelic \
   && mkdir -p /var/run/newrelic
-
 # Ensure $HOME is set
 ENV HOME /root
-# Copy config files
-#COPY etc /etc
 # Create www-data user
 RUN adduser -S www-data -G www-data \
   && usermod -u 1000 www-data
