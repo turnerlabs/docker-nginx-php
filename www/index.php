@@ -1,5 +1,0 @@
-<HTML>
-<BODY>
-<?PHP print("NGINX INSTALLED PROPERLY") ?>
-</BODY>
-</HTML>
