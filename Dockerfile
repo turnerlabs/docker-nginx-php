@@ -70,8 +70,6 @@ RUN wget "http://download.newrelic.com/php_agent/archive/6.5.0.166/newrelic-php5
 
 # Ensure $HOME is set
 ENV HOME /root
-# Copy config files
-COPY etc /etc
 # Create www-data user
 RUN adduser -S www-data -G www-data \
   && usermod -u 1000 www-data

@@ -1,6 +1,6 @@
-alpine linux base image with:
+Alpine Linux base image with:
 - nginx
-- php 5.6
+- php 7
 - composer
 - new relic
  
