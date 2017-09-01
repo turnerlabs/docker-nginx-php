@@ -1,28 +1,20 @@
-http://dl-2.alpinelinux.org/alpine/v3.5/main
-http://dl-3.alpinelinux.org/alpine/v3.5/main
-http://dl-4.alpinelinux.org/alpine/v3.5/main
-http://dl-5.alpinelinux.org/alpine/v3.5/main
-@v3.3 http://dl-2.alpinelinux.org/alpine/v3.3/main
-@v3.3 http://dl-3.alpinelinux.org/alpine/v3.3/main
-@v3.3 http://dl-4.alpinelinux.org/alpine/v3.3/main
-@v3.3 http://dl-5.alpinelinux.org/alpine/v3.3/main
-@v3.4 http://dl-2.alpinelinux.org/alpine/v3.4/main
-@v3.4 http://dl-3.alpinelinux.org/alpine/v3.4/main
-@v3.4 http://dl-4.alpinelinux.org/alpine/v3.4/main
-@v3.4 http://dl-5.alpinelinux.org/alpine/v3.4/main
-@v3.5-community http://dl-2.alpinelinux.org/alpine/v3.5/community
-@v3.5-community http://dl-3.alpinelinux.org/alpine/v3.5/community
-@v3.5-community http://dl-4.alpinelinux.org/alpine/v3.5/community
-@v3.5-community http://dl-5.alpinelinux.org/alpine/v3.5/community
+http://dl-2.alpinelinux.org/alpine/v3.6/main
+http://dl-3.alpinelinux.org/alpine/v3.6/main
+http://dl-4.alpinelinux.org/alpine/v3.6/main
+http://dl-5.alpinelinux.org/alpine/v3.6/main
 @edge http://dl-2.alpinelinux.org/alpine/edge/main
 @edge http://dl-3.alpinelinux.org/alpine/edge/main
 @edge http://dl-4.alpinelinux.org/alpine/edge/main
 @edge http://dl-5.alpinelinux.org/alpine/edge/main
+@edge-community http://dl-2.alpinelinux.org/alpine/edge/community
+@edge-community http://dl-3.alpinelinux.org/alpine/edge/community
+@edge-community http://dl-4.alpinelinux.org/alpine/edge/community
+@edge-community http://dl-5.alpinelinux.org/alpine/edge/community
 @testing http://dl-2.alpinelinux.org/alpine/edge/testing
 @testing http://dl-3.alpinelinux.org/alpine/edge/testing
 @testing http://dl-4.alpinelinux.org/alpine/edge/testing
 @testing http://dl-5.alpinelinux.org/alpine/edge/testing
-@community http://dl-2.alpinelinux.org/alpine/edge/community
-@community http://dl-3.alpinelinux.org/alpine/edge/community
-@community http://dl-4.alpinelinux.org/alpine/edge/community
-@community http://dl-5.alpinelinux.org/alpine/edge/community
+@community http://dl-2.alpinelinux.org/alpine/v3.6/community
+@community http://dl-3.alpinelinux.org/alpine/v3.6/community
+@community http://dl-4.alpinelinux.org/alpine/v3.6/community
+@community http://dl-5.alpinelinux.org/alpine/v3.6/community
