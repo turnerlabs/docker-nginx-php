@@ -2,17 +2,14 @@
 # Basic Nginx PHP-FPM Build
 FROM alpine:3.6
 COPY repositories /etc/apk/repositories
-#Environment
-ENV PHP_PATH=/usr/bin/php7
-ENV PHP_CONFIG_PATH=/etc/php7
-RUN apk update
-RUN apk upgrade
-RUN apk add \
+RUN apk update \
+ && apk upgrade \
+ && apk add \
     autoconf \
+    bash \
     ca-certificates \
     curl \
-    g++ \ 
- #RUN apk -v add \
+    g++ \
     git \
     libressl \
     make \
@@ -42,14 +39,15 @@ RUN apk add \
     php7-pdo_mysql@community \
     php7-phar@community \
     php7-session@community \
+    php7-simplexml@edge-community \
     php7-redis@community \
+    php7-tokenizer@edge-community \
     php7-xdebug@community \
+    php7-xmlwriter@edge-community \
     shadow@community \
     tar \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
-    #&& ln -s /usr/bin/php7 /usr/bin/php
-
+ && rm -rf /var/cache/apk/* \
+ && rm -rf /tmp/*
 
 # Install Composer
 RUN mkdir -p /etc/ssl/certs/ \
@@ -62,16 +60,16 @@ ENV NR_INSTALL_KEY=${}
 ENV NR_INSTALL_USE_CP_NOT_LN=/usr/bin/newrelic-php/
 ENV NR_INSTALL_PATH=/newrelic-php5-6.5.0.166-linux-musl
 RUN wget "http://download.newrelic.com/php_agent/archive/7.5.0.199/newrelic-php5-7.5.0.199-linux-musl.tar.gz" \
-  && gzip -dc newrelic-php5-7.5.0.199-linux-musl.tar.gz | tar xf - \
-  && cd newrelic-php5-7.5.0.199-linux-musl \
-  && ./newrelic-install install \
-  && rm -rf /newrelic-php5-7.5.0.199-linux-musl \
-  && rm -rf /newrelic-php5-7.5.0.199-linux-musl.tar.gz \
-  && mkdir -p /var/log/newrelic \
-  && mkdir -p /var/run/newrelic
+ && gzip -dc newrelic-php5-7.5.0.199-linux-musl.tar.gz | tar xf - \
+ && cd newrelic-php5-7.5.0.199-linux-musl \
+ && ./newrelic-install install \
+ && rm -rf /newrelic-php5-7.5.0.199-linux-musl \
+ && rm -rf /newrelic-php5-7.5.0.199-linux-musl.tar.gz \
+ && mkdir -p /var/log/newrelic \
+ && mkdir -p /var/run/newrelic
 
 # Ensure $HOME is set
 ENV HOME /root
 # Create www-data user
 RUN adduser -S www-data -G www-data \
-  && usermod -u 1000 www-data
+ && usermod -u 1000 www-data
