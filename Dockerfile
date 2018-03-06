@@ -19,6 +19,8 @@ RUN apk update \
     musl-utils \
     mysql-client \
     nginx \
+    nginx-mod-http-lua \
+    luajit@edge \
     nodejs@edge \
     nodejs-npm@edge \
     libwebp \
@@ -44,11 +46,11 @@ RUN apk update \
     php7-pdo_mysql@community \
     php7-phar@community \
     php7-session@community \
-    php7-simplexml@edge-community \
+    php7-simplexml@community \
     php7-redis@community \
-    php7-tokenizer@edge-community \
+    php7-tokenizer@community \
     php7-xdebug@community \
-    php7-xmlwriter@edge-community \
+    php7-xmlwriter@community \
     python2 \
     sassc@edge-community \
     shadow@community \
@@ -60,6 +62,16 @@ RUN apk update \
 RUN mkdir -p /etc/ssl/certs/ \
     && update-ca-certificates --fresh \
     && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
+
+# Download SigSci
+RUN mkdir -p /opt/sigsci && \
+    cd /opt/sigsci && \
+    wget https://dl.signalsciences.net/sigsci-agent/sigsci-agent_latest.tar.gz && \
+    tar -xzf sigsci-agent_latest.tar.gz && \
+    wget https://dl.signalsciences.net/sigsci-module-nginx/sigsci-module-nginx_latest.tar.gz && \
+    tar -xzf sigsci-module-nginx_latest.tar.gz && \
+    mv sigsci-module-nginx nginx && \
+    rm *.gz && chown -R root:root *
 
 #install newrelic php agent and daemon
 ENV NR_INSTALL_SILENT=FALSE
