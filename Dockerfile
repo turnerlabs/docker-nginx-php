@@ -25,6 +25,7 @@ RUN apk update \
     nodejs-npm@edge \
     libwebp \
     optipng@community \
+    pcre \
     php7@community \
     php7-apcu@community \
     php7-dom@community \
